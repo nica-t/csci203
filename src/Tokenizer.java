@@ -88,16 +88,23 @@ public class Tokenizer {
 		}
 		case ' ':
 		case '\n':{
-			//i++;
 			skip = true;
 			break;
 		}
 		case '"': {
-			int j = i;
-			String remainingStr = input.substring(j, input.length());
-			// TODO
-			newToken.setLexeme("=");
-			newToken.setT(Token.EQUALS);
+			if( i+1 < input.length()) {
+				int j = i+1;
+				String remainingStr = input.substring(j, input.length());
+				int k = remainingStr.indexOf('"');
+				System.out.println("index of next " + k);
+				
+				newToken.setLexeme(input.substring(0, k+2));
+				newToken.setT(Token.STRING);
+				i = k+1;
+			} else {
+				System.out.println("UNTERMINATED STRING");
+				valid = false;
+			}
 			break;
 		}
 		default: {
@@ -132,7 +139,25 @@ public class Tokenizer {
 				
 				i = j-1 ;
 			} else if (Character.isLetter(x)) {
-				// TODO
+				int j = i + 1;
+				String lexeme = "" + x;
+				while (j < input.length()) {
+					char k = input.charAt(j);
+					if (Character.isLetter(k)) {
+						lexeme = lexeme + k;
+					} else if (isValidAfterIdent(k)) {
+						break; // valid
+					} else {
+						System.out.println("ILLEGAL CHARCTER");
+						valid = false;
+					}
+					j++;
+				}
+				
+				newToken.setLexeme(lexeme);
+				newToken.setT(Token.IDENT);
+				
+				i = j-1 ;
 			} else {
 				System.out.println("ILLEGAL CHARCTER" + x);
 			}
@@ -150,6 +175,12 @@ public class Tokenizer {
 		}
 		
 		return newStr;
+	}
+
+	private static boolean isValidAfterIdent(char letter) {
+		return (letter == '+' || letter == '-' || letter == '*' || letter == '/' || letter == '\n' ||
+				letter == '%' || letter == ' ' || letter == '(' || letter == ')' || letter == ';');
+				
 	}
 
 }
