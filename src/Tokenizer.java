@@ -91,11 +91,13 @@ public class Tokenizer {
 			skip = true;
 			break;
 		}
+		case '\'': 
 		case '"': {
 			if( i+1 < input.length()) {
+				char charAtI = input.charAt(i);
 				int j = i+1;
 				String remainingStr = input.substring(j, input.length());
-				int k = remainingStr.indexOf('"');
+				int k = remainingStr.indexOf(charAtI);
 				System.out.println("index of next " + k);
 				
 				newToken.setLexeme(input.substring(0, k+2));
@@ -115,7 +117,9 @@ public class Tokenizer {
 				int j = i + 1;
 				String lexeme = "" + x;
 				boolean dotExist = false;
+				boolean eExist = false;
 				boolean digitRequiredNext = false;
+				boolean numberRequiredNext = false;
 
 				while (j < input.length()) {
 					char k = input.charAt(j);
@@ -124,6 +128,13 @@ public class Tokenizer {
 						digitRequiredNext = false;
 					} else if (!dotExist && k == '.') {
 						lexeme = lexeme + k;
+						digitRequiredNext = true;
+					} else if (!eExist && (k == 'e' || k == 'E')) {
+						lexeme = lexeme + k;
+						numberRequiredNext = true;
+					} else if (numberRequiredNext && k == '-') {
+						lexeme = lexeme + k;
+						numberRequiredNext = false;
 						digitRequiredNext = true;
 					} else if (!digitRequiredNext && k != '.') {
 						break; // valid
