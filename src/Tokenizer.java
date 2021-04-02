@@ -17,7 +17,7 @@ public class Tokenizer {
 		TokenVO displayToken = baseToken;
 		while (displayToken.getNextToken() != null) {
 			displayToken = displayToken.getNextToken();
-			System.out.println(displayToken.getT().getName() + ": " + displayToken.getLexeme() );
+			System.out.println(displayToken.getT().getName() + " " + displayToken.getLexeme() );
 		}
 
 	}
@@ -105,14 +105,24 @@ public class Tokenizer {
 				char charAtI = input.charAt(i);
 				int j = i+1;
 				String remainingStr = input.substring(j, input.length());
-				int k = remainingStr.indexOf(charAtI);
 				
-				newToken.setLexeme(input.substring(0, k+2));
-				newToken.setT(Token.STRING);
-				i = k+1;
+				int k = remainingStr.indexOf(charAtI);
+				int m = remainingStr.indexOf('\n');
+				
+				if (k < m) {
+					newToken.setLexeme(input.substring(0, k+2));
+					newToken.setT(Token.STRING);
+					i = k + 1;
+				} else {
+					newToken.setLexeme("");
+					newToken.setT(Token.UNTERMINATED);
+					i = m + 1;
+				}
+				 
 			} else {
-				System.out.println("UNTERMINATED STRING");
-				valid = false;
+				newToken.setLexeme("");
+				newToken.setT(Token.UNTERMINATED);
+				i = input.length()-1;
 			}
 			break;
 		}
@@ -184,8 +194,8 @@ public class Tokenizer {
 				
 				i = j-1 ;
 			} else {
-				System.out.println("ILLEGAL CHARACTER" + x );
-				valid = false;
+				newToken.setLexeme("");
+				newToken.setT(Token.ILLEGALCHAR);
 			}
 
 		}
@@ -205,7 +215,8 @@ public class Tokenizer {
 
 	private static boolean isValidAfterIdent(char nextChar) {
 		return (nextChar == '+' || nextChar == '-' || nextChar == '*' || nextChar == '/' || nextChar == '\n' ||
-				nextChar == '%' || nextChar == ' ' || nextChar == '(' || nextChar == ')' || nextChar == ';' || nextChar == '#');
+				nextChar == '%' || nextChar == ' ' || nextChar == '(' || nextChar == ')' || nextChar == ';' || 
+				nextChar == '#' || nextChar == '"');
 				
 	}
 
