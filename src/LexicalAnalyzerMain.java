@@ -17,9 +17,6 @@ public class LexicalAnalyzerMain {
 			file = sc.nextLine();
 		}
 
-		// test
-		file = "C:\\workspace\\CSCI203_Project\\sampleinput.txt";
-		
 		StringBuilder resultStringBuilder = new StringBuilder();
 	    try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
 	        String line;
@@ -27,10 +24,9 @@ public class LexicalAnalyzerMain {
 	            resultStringBuilder.append(line).append("\n");
 	        }
 	        
-	        System.out.println("Tokenizing: " + resultStringBuilder.toString());
 	        Tokenizer.tokenize(resultStringBuilder.toString());
 	    } catch (IOException e) {
-			System.out.printf("Enter filename: {}", e.getMessage());
+			System.out.printf("Cannot open filename: {}", e.getMessage());
 		}
 
 	}
