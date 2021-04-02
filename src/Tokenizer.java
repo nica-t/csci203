@@ -52,8 +52,15 @@ public class Tokenizer {
 			break;
 		}
 		case '/': {
-			newToken.setLexeme("/");
-			newToken.setT(Token.DIVIDE);
+			if (i + 1 < input.length() && input.charAt(i + 1) == '/') {
+				String remainingStr = input.substring(i, input.length());
+				int j = remainingStr.indexOf('\n');
+				i = j > 0 ? i+j: input.length() - 1;
+				skip = true;
+			} else {
+				newToken.setLexeme("/");
+				newToken.setT(Token.DIVIDE);
+			}
 			break;
 		}
 		case '%': {
@@ -87,6 +94,7 @@ public class Tokenizer {
 			break;
 		}
 		case ' ':
+		case '\0':
 		case '\n':{
 			skip = true;
 			break;
@@ -98,7 +106,6 @@ public class Tokenizer {
 				int j = i+1;
 				String remainingStr = input.substring(j, input.length());
 				int k = remainingStr.indexOf(charAtI);
-				System.out.println("index of next " + k);
 				
 				newToken.setLexeme(input.substring(0, k+2));
 				newToken.setT(Token.STRING);
@@ -107,6 +114,13 @@ public class Tokenizer {
 				System.out.println("UNTERMINATED STRING");
 				valid = false;
 			}
+			break;
+		}
+		case '#': {
+			String remainingStr = input.substring(i, input.length());
+			int j = remainingStr.indexOf('\n');
+			i = j > 0 ? i+j : input.length() -1;
+			skip = true;
 			break;
 		}
 		default: {
@@ -159,7 +173,7 @@ public class Tokenizer {
 					} else if (isValidAfterIdent(k)) {
 						break; // valid
 					} else {
-						System.out.println("ILLEGAL CHARCTER");
+						System.out.println("ILLEGAL CHARACTER");
 						valid = false;
 					}
 					j++;
@@ -170,7 +184,8 @@ public class Tokenizer {
 				
 				i = j-1 ;
 			} else {
-				System.out.println("ILLEGAL CHARCTER" + x);
+				System.out.println("ILLEGAL CHARACTER" + x );
+				valid = false;
 			}
 
 		}
@@ -188,9 +203,9 @@ public class Tokenizer {
 		return newStr;
 	}
 
-	private static boolean isValidAfterIdent(char letter) {
-		return (letter == '+' || letter == '-' || letter == '*' || letter == '/' || letter == '\n' ||
-				letter == '%' || letter == ' ' || letter == '(' || letter == ')' || letter == ';');
+	private static boolean isValidAfterIdent(char nextChar) {
+		return (nextChar == '+' || nextChar == '-' || nextChar == '*' || nextChar == '/' || nextChar == '\n' ||
+				nextChar == '%' || nextChar == ' ' || nextChar == '(' || nextChar == ')' || nextChar == ';' || nextChar == '#');
 				
 	}
 
