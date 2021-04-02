@@ -9,12 +9,14 @@ public enum Token {
 	LPAREN("LPAREN"), 
 	RPAREN("RPAREN"), 
 	COMMA("COMMA"), 
-	SEMICOLON("SEMICOLON"), 
+	SEMICOLON("SCOLON"), 
 	EQUALS("EQUALS"), 
 	NUMBER("NUMBER"), 
 	IDENT("IDENT"), 
 	STRING("STRING"), 
-	EOF("EOF");
+	ILLEGALCHAR("lexical error: illegal character"),
+	UNTERMINATED("lexical error: unterminated"),
+	BADLYFORMED("lexical error: badly formed");
 
 	private int count = 0;
 	private String name;
