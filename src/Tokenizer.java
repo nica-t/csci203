@@ -2,14 +2,13 @@ public class Tokenizer {
 
 	private static TokenVO tokens = new TokenVO();
 	private static TokenVO currentToken = tokens;
-	private static boolean valid = true;
 
 	public static void tokenize(String input) throws Exception {
 
 		TokenVO baseToken = tokens;
 		String str = input;
 
-		while (str.length() > 0 && valid) {
+		while (str.length() > 0) {
 			str = getNextToken(str);
 		}
 		
@@ -29,7 +28,7 @@ public class Tokenizer {
 		String newStr = "";
 		boolean skip = false;
 
-		switch (input.charAt(i)) {
+		MainSwitch: switch (input.charAt(i)) {
 		case '+': {
 			newToken.setLexeme("+");
 			newToken.setT(Token.PLUS);
@@ -156,16 +155,30 @@ public class Tokenizer {
 					} else if (!eExist && (k == 'e' || k == 'E')) {
 						lexeme = lexeme + k;
 						numberRequiredNext = true;
-					} else if (numberRequiredNext && k == '-') {
+						eExist = true;
+					} else if (numberRequiredNext && (k == '-' || k == '+')) {
 						lexeme = lexeme + k;
 						numberRequiredNext = false;
 						digitRequiredNext = true;
 					} else if (!digitRequiredNext && k != '.') {
 						break; // valid
 					} else {
-						System.out.println("BADLY FORMED NUMBER");
-						valid = false;
+						newToken.setLexeme("");
+						newToken.setT(Token.BADLYFORMED);
+						
+						String remainingStr = input.substring(i, input.length());
+						int s = remainingStr.indexOf(' ');
+						int m = remainingStr.indexOf('\n');
+						
+						if (s == -1 && m == -1) {
+							i = input.length() - 1;
+						} else {
+							i = s < m? i + s: i + m;
+						}
+						
+						break MainSwitch;
 					}
+					
 					j++;
 				}
 				
@@ -180,11 +193,26 @@ public class Tokenizer {
 					char k = input.charAt(j);
 					if (Character.isLetter(k)) {
 						lexeme = lexeme + k;
-					} else if (isValidAfterIdent(k)) {
+					/* } else if (isValidAfterIdent(k)) {
 						break; // valid
 					} else {
-						System.out.println("ILLEGAL CHARACTER");
-						valid = false;
+						newToken.setLexeme("");
+						newToken.setT(Token.ILLEGALCHAR);
+						
+						String remainingStr = input.substring(i, input.length());
+						int s = remainingStr.indexOf(' ');
+						int m = remainingStr.indexOf('\n');
+						
+						if (s == -1 && m == -1) {
+							i = input.length() - 1;
+						} else {
+							i = s < m? i + s: i + m;
+						}
+						
+						break MainSwitch;
+					}*/
+					} else {
+						break; // valid
 					}
 					j++;
 				}
