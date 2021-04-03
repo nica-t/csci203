@@ -15,7 +15,7 @@ public enum Token {
 	IDENT("IDENT"), 
 	STRING("STRING"), 
 	ILLEGALCHAR("lexical error: illegal character"),
-	UNTERMINATED("lexical error: unterminated"),
+	UNTERMINATED("lexical error: unterminated string"),
 	BADLYFORMED("lexical error: badly formed");
 
 	private int count = 0;
